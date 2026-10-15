@@ -1,0 +1,570 @@
+/* ============================================================
+   FOCUS — AJUSTES PARA CELULAR / TABLET
+   Carregado DEPOIS do CSS de cada página (fica no <body>, logo abaixo do
+   <link> da página), então ganha da cascata sem precisar de !important
+   na maioria dos casos. Só entra em ação em telas estreitas.
+   ============================================================ */
+
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img, video, canvas, svg { max-width: 100%; }
+
+/* ---------- Tablet / celular grande: menu vira barra inferior ---------- */
+@media (max-width: 900px) {
+    :root { --nav-height: 64px; --bottom-nav-h: 68px; }
+
+    /* só as páginas que têm a barra de navegação reservam espaço pra ela */
+    body:has(.navbar-main) { padding-top: calc(var(--nav-height) + 22px); }
+    body:has(.nav-links) {
+        padding-bottom: calc(var(--bottom-nav-h) + 24px + env(safe-area-inset-bottom, 0px));
+        --toast-bottom: calc(var(--bottom-nav-h) + 14px + env(safe-area-inset-bottom, 0px));
+    }
+
+    /* Barra do topo: só logo + usuário */
+    .navbar-main { height: var(--nav-height); }
+    .nav-content { padding: 0 14px; gap: 10px; }
+    .nav-logo { width: 58px; }
+    .nav-brand { gap: 6px; }
+    .nav-brand::after { left: 31px; top: 0; width: 20px; height: 20px; }
+    .brand-text { font-size: 22px; }
+    .profile-trigger { padding: 4px 6px 4px 10px; gap: 10px; min-height: 44px; }
+    .profile-trigger span { font-size: 14px; max-width: 34vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .profile-img { width: 42px; height: 42px; border-width: 2px; }
+    .nav-status-dot { width: 13px; height: 13px; border-width: 2px; }
+    .dropdown-menu { top: calc(100% + 8px); width: min(250px, calc(100vw - 24px)); }
+    .dropdown-item { padding: 14px 18px; min-height: 48px; }
+
+    /* Barra inferior (os mesmos links do menu de cima) */
+    .nav-links {
+        display: flex !important;
+        position: fixed; left: 0; right: 0; bottom: 0;
+        z-index: 9000; margin: 0; list-style: none;
+        gap: 2px; padding: 6px 6px calc(6px + env(safe-area-inset-bottom, 0px));
+        background: var(--nav-bg);
+        border-top: 2px solid var(--accent);
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.14);
+    }
+    .nav-links li { flex: 1 1 0; min-width: 0; }
+    .nav-links a {
+        flex-direction: column; justify-content: center; gap: 3px;
+        padding: 7px 0; font-size: 10.5px; letter-spacing: -0.2px; line-height: 1.1; text-align: center;
+        border-radius: 14px; min-height: 52px; width: 100%;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .nav-links a i { font-size: 18px; margin: 0; }
+    .nav-links a:hover { transform: none; }
+
+    /* o dropdown/avatars não ficam por baixo da barra inferior */
+    .container { padding-left: 18px; padding-right: 18px; }
+}
+
+/* ---------- Avisos (toasts) e pop-ups flutuantes ----------
+   No desktop eles ficam escondidos com "right: -600px". No celular isso ALARGA a
+   página (o navegador aumenta a tela pra caber o aviso invisível), e aí tudo
+   fica desproporcional/quebrado. Aqui eles escondem com transform+opacity e,
+   quando aparecem, ocupam a largura da tela, acima da barra inferior. */
+@media (max-width: 900px) {
+    :root { --toast-bottom: calc(14px + env(safe-area-inset-bottom, 0px)); }
+
+    .toast-metas, .toast-gold, .toast-engine, .micro-popup,
+    .toast-metas.show, .toast-gold.show, .toast-engine.show, .micro-popup.show {
+        left: 12px; right: 12px; width: auto; max-width: none;
+        bottom: var(--toast-bottom);
+        box-sizing: border-box; border-radius: 22px; padding: 14px 18px;
+        gap: 12px; font-size: 14px;
+        transition: transform .45s cubic-bezier(.2,.9,.3,1.15), opacity .3s ease, visibility 0s linear .45s;
+    }
+    .toast-metas:not(.show), .toast-gold:not(.show), .toast-engine:not(.show), .micro-popup:not(.show) {
+        transform: translateY(170%); opacity: 0; visibility: hidden; pointer-events: none;
+    }
+    .toast-metas.show, .toast-gold.show, .toast-engine.show, .micro-popup.show {
+        transform: none; opacity: 1; visibility: visible; transition-delay: 0s;
+    }
+}
+
+/* Telas sem mouse: nada de "hover" grudado depois do toque */
+@media (hover: none) {
+    .nav-card:hover, .nav-links a:hover { transform: none; }
+}
+
+/* ---------- Celular ---------- */
+@media (max-width: 700px) {
+    /* iOS dá zoom em campos com letra < 16px e "empurra" a página: evita isso */
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+    select, textarea { font-size: 16px; }
+
+    button, .btn, [role="button"], select { touch-action: manipulation; }
+}
+
+@media (max-width: 400px) {
+    .nav-links a { font-size: 9.6px; letter-spacing: -0.3px; }
+}
+@media (max-width: 380px) {
+    .profile-trigger span { display: none; }
+    .profile-trigger { padding-left: 6px; }
+    .nav-links a { font-size: 9.6px; letter-spacing: -0.3px; }
+}
+/* depois da regra de 380px, senão ela vence esta (por isso "Comunidades" era cortada) */
+@media (max-width: 360px) {
+    .nav-links { padding-left: 3px; padding-right: 3px; gap: 1px; }
+    .nav-links a { font-size: 9px; letter-spacing: -0.4px; }
+}
+@media (max-width: 330px) {
+    .nav-links a { font-size: 8.5px; letter-spacing: -0.4px; }
+}
+
+/* Barra do topo não atrapalha nos modos de tela deitada baixa */
+@media (max-height: 460px) and (max-width: 900px) {
+    :root { --bottom-nav-h: 52px; }
+    .nav-links a { flex-direction: row; min-height: 40px; font-size: 11px; gap: 5px; }
+    .nav-links a i { font-size: 14px; }
+}
+
+/* ============================================================
+   ACESSIBILIDADE — "Tamanho da letra" usa zoom no <body>. No celular, 1.25/1.5
+   deixam a tela com ~250px de largura e quebram qualquer layout; limitamos.
+   ============================================================ */
+@media (max-width: 700px) {
+    body.text-medio { zoom: 1.1; }
+    body.text-grande { zoom: 1.2; }
+}
+
+/* ============================================================
+   CONFIGURAÇÕES
+   ============================================================ */
+@media (max-width: 700px) {
+    body:has(.settings-hub) { padding: 14px 10px calc(24px + env(safe-area-inset-bottom, 0px)); align-items: flex-start; }
+    .settings-hub { padding: 26px 16px 22px; border-radius: 30px; }
+    .btn-close-config { right: 12px; top: 26px; width: 44px; height: 44px; font-size: 22px; opacity: .75; display: inline-flex; align-items: center; justify-content: center; }
+    .hub-header { margin-bottom: 26px; padding: 0 34px; }
+    .hub-header h1 { font-size: 28px; letter-spacing: -1px; line-height: 1.1; }
+    .hub-header p { font-size: 14px; }
+    .config-section { margin-bottom: 32px; }
+    .section-title { font-size: 12px; letter-spacing: 1.5px; }
+
+    /* itens com interruptor / botões: nada de "amassar" o toggle */
+    .setting-item { padding: 14px 14px; gap: 12px; border-radius: 18px; }
+    .setting-item:hover { transform: none; }
+    .item-info { flex: 1 1 auto; min-width: 0; }
+    .item-info b { font-size: 15px; }
+    .item-info span { font-size: 12.5px; line-height: 1.35; }
+    .switch { flex: 0 0 60px; width: 60px; height: 32px; }
+    .setting-item:has(.text-size-group) { flex-wrap: wrap; }
+    .setting-item:has(.text-size-group) .item-info { flex-basis: 100%; }
+    .text-size-group { flex: 0 0 auto; }
+    .text-size-btn { width: 48px; height: 48px; flex: 0 0 48px; }
+
+    .theme-nav { flex: 0 0 40px; width: 40px; height: 40px; }
+    .theme-slider { gap: 8px; }
+    .theme-slide { width: 150px; }
+    .sound-tracks-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .security-summary { padding: 16px 16px; min-height: 52px; }
+    .security-summary-label { min-width: 0; }
+    .security-block .setting-item, .security-form .setting-item { flex-wrap: wrap; }
+    .btn-save-secondary, .btn-save-exit { min-height: 48px; }
+    .btn-save-exit { margin-top: 22px; }
+    /* painel "Modo desenvolvedor": texto + botão, sem estourar */
+    form.setting-item { flex-wrap: wrap; }
+    form.setting-item .btn-save-secondary { width: 100% !important; }
+}
+
+/* ============================================================
+   PERFIL / EDITAR PERFIL / ESCOLHER AVATAR
+   ============================================================ */
+@media (max-width: 700px) {
+    body:has(.profile-card), body:has(.edit-card) {
+        padding: 14px 10px calc(24px + env(safe-area-inset-bottom, 0px)); align-items: flex-start;
+    }
+    .profile-card { padding: 38px 20px 30px; border-radius: 32px; border-bottom-width: 10px; }
+    .edit-card { padding: 28px 18px 26px; border-radius: 32px; border-bottom-width: 10px; }
+    .btn-close-profile, .btn-icon-back {
+        min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-close-profile { right: 10px; top: 10px; }
+    .header-edit h1, .edit-card h1 { font-size: 26px; }
+
+    /* bolinhas de avatar: nunca viram "ovais" */
+    .avatars-grid { gap: 14px; flex-wrap: wrap; margin-bottom: 26px; }
+    .avatar-option { flex: 0 0 auto; }
+    .avatar-img { width: 72px; height: 72px; flex: 0 0 72px; aspect-ratio: 1 / 1; border-width: 3px; }
+    .avatar-option input:checked + .avatar-img { transform: scale(1.08); }
+
+    /* o campo de arquivo é invisível; o CSS de .input-group input esticava ele e alargava a página */
+    .input-group input.file-picker-input, input.file-picker-input {
+        position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; border: 0; overflow: hidden;
+    }
+    .file-picker { padding: 14px; }
+    /* só nos campos SEM ícone (editar perfil / completar perfil) */
+    .edit-card .input-group input:not(.file-picker-input) { padding: 15px 16px; }
+    .btn-save { padding: 18px; min-height: 52px; }
+}
+
+/* ============================================================
+   CONTROLE PARENTAL (lado do aluno)
+   ============================================================ */
+@media (max-width: 700px) {
+    body:has(.settings-hub .hud-header) { padding-top: 14px; }
+    .settings-hub .hud-header { gap: 14px; margin-bottom: 20px; padding-right: 34px; }
+    .settings-hub .header-avatar { width: 52px; height: 52px; flex: 0 0 52px; }
+    .settings-hub .hud-header h1 { font-size: 24px; line-height: 1.1; }
+    .settings-hub .hud-header p { font-size: 13px; }
+    .cp-card { padding: 18px 16px; border-radius: 22px; }
+    .cp-form-row { flex-direction: column; }
+    .cp-form-row .input-group { min-width: 0; width: 100%; }
+    .cp-form-row .btn-primary, .cp-card .btn-primary { width: 100%; justify-content: center; min-height: 48px; }
+    .cp-item { flex-wrap: wrap; padding: 14px; gap: 12px; }
+    .cp-item .btn-danger-mini, .cp-item button, .cp-item form { min-height: 44px; }
+    .cp-link-box { padding: 16px; border-radius: 18px; }
+    .guia-compacto { padding: 14px; }
+    .guia-fechar { min-width: 40px; min-height: 40px; }
+}
+
+/* ============================================================
+   MEUS ESTUDOS / MÓDULO / DISCIPLINA
+   ============================================================ */
+@media (max-width: 700px) {
+    /* modais: cabem na tela e rolam por dentro se for preciso (teclado aberto etc.) */
+    .modal-overlay { padding: 12px; align-items: center; overflow-y: auto; }
+    .modal-box {
+        padding: 24px 18px 20px; border-radius: 24px; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px);
+        overflow-y: auto; -webkit-overflow-scrolling: touch;
+    }
+    .modal-box h3 { font-size: 21px; margin-bottom: 16px; }
+    .modal-buttons { gap: 10px; flex-wrap: wrap; }
+    .modal-buttons > * { flex: 1 1 120px; min-height: 48px; justify-content: center; }
+    .dificuldade-picker button { min-width: 44px; min-height: 44px; }
+    .btn-primary, .btn-cancel, .btn-mini { min-height: 44px; }
+
+    .page-actions { margin: 20px 0 12px; }
+    .btn-icon-back { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    .guia-fechar { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    .guia-compacto { padding: 12px 12px 12px 14px; gap: 10px; }
+    .btn-icon-editar, .btn-icon-danger { min-width: 40px; min-height: 40px; }
+
+    /* cards de módulo / disciplina */
+    .disciplina-grid { grid-template-columns: 1fr; gap: 16px; }
+    .disciplina-card { padding: 20px; border-radius: 22px; cursor: default; -webkit-touch-callout: none; }
+    .disciplina-card:hover { transform: none; }
+    .disciplina-nome { font-size: 18px; overflow-wrap: anywhere; }
+    .disciplina-actions { flex-wrap: wrap; }
+    .sugestao-card { flex-wrap: wrap; }
+    .sugestao-card .btn-primary { width: 100%; justify-content: center; }
+
+    /* abas da disciplina: 3 em uma linha */
+    .tabs-bar { margin: 18px 0 16px; gap: 6px; flex-wrap: nowrap; }
+    .tab-btn { flex: 1 1 0; min-width: 0; justify-content: center; padding: 11px 6px; font-size: 13px; gap: 5px; white-space: nowrap; min-height: 46px; }
+
+    /* checklist */
+    .checklist-item { padding: 12px 12px; gap: 10px; }
+    .checklist-check { flex: 0 0 auto; min-width: 28px; min-height: 28px; }
+    .form-inline { gap: 10px; }
+    .form-inline > * { min-width: 0; }
+    .form-inline .btn-primary { width: 100%; justify-content: center; }
+    .nova-tarefa-box { flex-direction: column; align-items: stretch; gap: 10px; }
+    .nova-tarefa-box .input-group { flex: none !important; width: 100%; }
+    .nova-tarefa-box .tarefa-input { min-height: 54px; caret-color: var(--accent); }
+    .nova-tarefa-box .tarefa-input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-glow, rgba(0,0,0,.12)); }
+    .nova-tarefa-box .btn-primary { width: 100%; min-height: 52px; justify-content: center; }
+
+    /* cronômetro */
+    .pomodoro-box { padding: 10px 0; }
+    .pomodoro-modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 16px 0; }
+    .pomodoro-modes button {
+        width: 100%; min-height: 52px; padding: 8px 10px; font-size: 13px; line-height: 1.2;
+        display: flex; align-items: center; justify-content: center; gap: 6px; text-align: center;
+    }
+    .pomodoro-controls { flex-wrap: wrap; gap: 10px; }
+    .pomodoro-controls > * { flex: 1 1 calc(50% - 10px); max-width: none !important; min-height: 48px; justify-content: center; }
+    .pomodoro-controls > .btn-primary { flex-basis: 100%; }
+    .pomodoro-personalizado { width: 100%; }
+
+    /* anotações / caderno virtual */
+    .anotacoes-modos { flex-wrap: wrap; }
+    .modo-btn { min-height: 44px; flex: 1 1 auto; justify-content: center; }
+    .anotacoes-box textarea { min-height: 260px; padding: 16px; }
+    #tab-anotacoes [class*="acoes"], #tab-anotacoes .anotacoes-botoes { flex-wrap: wrap; }
+    #tab-anotacoes .btn-cancel, #tab-anotacoes .btn-primary { max-width: none !important; flex: 1 1 140px; justify-content: center; }
+    .desenho-toolbar { flex-wrap: wrap; justify-content: center; gap: 12px; padding: 12px; }
+    .desenho-toolbar .paleta-cores { gap: 10px; }
+    .cor-btn { width: 36px; height: 36px; }
+    .ferramenta-btn { width: 42px; height: 42px; }
+    .desenho-toolbar #espessura { width: 100%; margin: 6px 0; }
+    .canvas-desenho { height: 340px; }
+}
+
+/* ============================================================
+   COMUNIDADES (lista, perfil, conversa direta e grupo)
+   ============================================================ */
+@media (max-width: 700px) {
+    .com-card { padding: 16px 14px; border-radius: 20px; margin-bottom: 16px; }
+    .com-search-form { gap: 8px; }
+    .com-search-form input { min-width: 0; flex: 1 1 auto; }
+    .com-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; margin-left: -2px; padding: 2px 2px 6px; }
+    .com-tabs::-webkit-scrollbar { display: none; }
+    .com-tab { flex: 0 0 auto; min-height: 44px; display: inline-flex; align-items: center; gap: 6px; }
+    .com-btn { min-height: 44px; }
+    .com-btn.small { min-height: 40px; }
+
+    /* linha de pessoa: nome nunca some; botões descem pra linha de baixo quando faltar espaço */
+    .com-pessoa { flex-wrap: wrap; gap: 10px 12px; padding: 10px 6px; }
+    .com-pessoa-info { flex: 1 1 110px; }
+    .com-pessoa-info strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .com-acoes { flex: 0 0 auto; margin-left: auto; gap: 2px; }
+    .com-acoes button, .com-acoes a { min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+    .com-grupo-card { padding: 12px; }
+    .com-grupo-card > div:not(.com-grupo-icon) { min-width: 0; }
+    .com-grupo-card strong { overflow-wrap: anywhere; }
+
+    /* conversa: ocupa a altura útil da tela (entre as barras de cima e de baixo) */
+    .com-chat-layout { gap: 14px; }
+    .com-chat-card {
+        height: calc(100vh - var(--nav-height) - var(--bottom-nav-h) - 60px);
+        height: calc(100dvh - var(--nav-height) - var(--bottom-nav-h) - 60px - env(safe-area-inset-bottom, 0px));
+        min-height: 340px; border-radius: 18px;
+    }
+    .com-chat-header { gap: 8px; padding: 10px 10px; }
+    .com-chat-header .info { min-width: 0; flex: 1; }
+    .com-chat-header .info strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .com-chat-header .voltar { min-width: 40px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; margin: 0; }
+    .com-chat-header button, .com-chat-header a:not(.voltar) { min-width: 40px; min-height: 40px; }
+    .com-mensagens { padding: 12px; }
+    .com-msg { max-width: 88%; overflow-wrap: anywhere; word-break: break-word; min-width: 0; }
+    .com-msg img.com-msg-imagem { max-width: 100%; height: auto; }
+    .com-msg .fixar-btn { display: none !important; }
+    .com-fixadas { padding: 8px 12px; }
+
+    /* barra de digitar: o botão de enviar nunca fica pra fora */
+    .com-chat-form { gap: 8px; padding: 8px 10px; align-items: center; }
+    .com-chat-form input[type="text"] { min-width: 0; flex: 1 1 auto; padding: 12px 14px; min-height: 46px; }
+    .com-chat-form label.anexo { flex: 0 0 auto; min-width: 40px; min-height: 40px; display: inline-flex; align-items: center; justify-content: center; }
+    .com-chat-form .com-btn { flex: 0 0 auto; min-width: 46px; min-height: 46px; }
+
+    /* com o teclado aberto, a barra de baixo sai da frente */
+    /* (a regra geral de "teclado aberto" está no fim do arquivo) */
+
+    /* modais "Novo grupo" / "Configurar grupo" */
+    #modalNovoGrupo, #modalConfigGrupo { padding: 12px; }
+    #modalNovoGrupo > div, #modalConfigGrupo > div { width: 100% !important; max-height: calc(100vh - 24px); max-height: calc(100dvh - 24px); overflow-y: auto; }
+    .com-perfil-acoes .com-btn { flex: 1 1 140px; justify-content: center; }
+}
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+@media (max-width: 700px) {
+    .hud-header { gap: 14px; margin-bottom: 18px; }
+    .header-avatar { width: 52px; height: 52px; flex: 0 0 52px; }
+    .hud-header h1 { font-size: 26px; line-height: 1.1; overflow-wrap: anywhere; }
+    .hud-header p { font-size: 14px; }
+    .section-eyebrow { margin: 22px 0 12px; }
+    .mood-card { padding: 26px 18px; gap: 22px; border-radius: 24px; margin-bottom: 24px; }
+    .battery-outer { width: 76px; height: 150px; border-width: 5px; gap: 6px; padding: 6px; }
+    .mood-content h2 { font-size: 24px; }
+    input[type="range"] { margin: 22px 0; height: 32px; }
+    .mood-status { padding: 10px 16px; font-size: 13px; }
+    .nav-grid { gap: 14px; }
+    .nav-card { padding: 16px; border-radius: 22px; display: grid; grid-template-columns: 56px minmax(0, 1fr); column-gap: 16px; align-items: center; text-align: left; border-left-width: 8px !important; }
+    .nav-card i { grid-row: 1 / span 2; width: 56px; height: 56px; font-size: 24px; margin: 0; border-radius: 16px; }
+    .nav-card h3 { font-size: 18px; margin-bottom: 2px; align-self: end; }
+    .nav-card p { font-size: 13px; line-height: 1.4; align-self: start; }
+    .hud-info-icon { width: 72px; height: 72px; flex: 0 0 72px; }
+    .hud-info-icon i { font-size: 30px; }
+    .hud-info-card { padding: 24px 18px; gap: 18px; border-radius: 26px; }
+    .focus-box { width: calc(100% - 32px); max-width: 420px; }
+}
+
+/* ============================================================
+   DESEMPENHO
+   ============================================================ */
+@media (max-width: 700px) {
+    .metrics-grid { gap: 12px; margin-bottom: 22px; }
+    .metric-card { padding: 16px; border-radius: 22px; gap: 14px; }
+    .metric-icon { width: 52px; height: 52px; flex: 0 0 52px; }
+    .metric-card h3 { font-size: 26px; }
+    .page-actions .btn-primary { min-height: 48px; }
+
+    /* gráfico: ocupa a largura toda; setas descem para a linha dos pontinhos */
+    .chart-box { padding: 16px 12px 14px; border-radius: 24px; }
+    .chart-slider { flex-wrap: wrap; gap: 8px; }
+    .chart-slides { order: -1; flex: 1 0 100%; height: 330px; }
+    .chart-nav { width: 44px; height: 44px; flex: 0 0 44px; }
+    .chart-slider .chart-nav:first-child { order: 1; margin-right: auto; }
+    .chart-slider .chart-nav:last-child { order: 2; }
+    .slide-titulo { flex-wrap: wrap; gap: 6px; font-size: 13px; }
+    .chart-zoom-reset { display: none; }
+    .chart-dots { margin-top: 12px; }
+    .chart-percent-label .valor { font-size: 28px; }
+    .modulos-legenda { flex-wrap: wrap; gap: 8px 14px; }
+    .insight-ai { padding: 22px 18px; gap: 16px; border-radius: 24px; }
+    .insight-icon { width: 60px; height: 60px; flex: 0 0 60px; border-radius: 18px; }
+    .ai-message { font-size: 16px; }
+    .share-options .btn-mini { min-height: 48px; }
+}
+
+/* ============================================================
+   AGENDA (METAS)
+   ============================================================ */
+@media (max-width: 700px) {
+    .week-grid { grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px; margin-bottom: 22px; }
+    .day-box { padding: 10px 2px; border-radius: 14px; min-width: 0; }
+    .day-box:hover { transform: none; }
+    .day-name { font-size: 9.5px; letter-spacing: 0; }
+    .day-num { font-size: 18px; margin: 4px 0; }
+    .planner-card { padding: 18px 14px; border-radius: 22px; }
+    .suggestion-header { flex-wrap: wrap; gap: 10px; }
+    .meta-item { padding: 12px; gap: 12px; }
+    .meta-item-text { min-width: 0; overflow-wrap: anywhere; }
+    .meta-checkbox { min-width: 40px; min-height: 40px; flex: 0 0 40px; }
+    .btn-historico-share { min-height: 44px; }
+    .historico-item { flex-wrap: wrap; gap: 10px; }
+    .historico-lista { max-height: 55vh; }
+    .modal-box-lg { max-width: 100%; }
+}
+
+/* ============================================================
+   PAINEL DO RESPONSÁVEL
+   ============================================================ */
+@media (max-width: 700px) {
+    .r-nav-content { padding: 0 14px; gap: 10px; }
+    .r-sair { min-height: 44px; display: inline-flex; align-items: center; }
+    .r-container { padding: 20px 14px calc(40px + env(safe-area-inset-bottom, 0px)); }
+    .r-back { min-height: 44px; }
+    .r-header { gap: 12px; margin-bottom: 20px; }
+    .r-header { flex-wrap: wrap; }
+    .r-header > div:not(.r-header-icon) { flex: 1 1 140px; min-width: 0; }
+    .r-header-icon { flex: 0 0 auto; }
+    .r-header > .r-btn { margin-left: 0 !important; flex: 1 1 100%; }
+    .r-form-row .r-btn { margin-top: 0 !important; align-self: stretch !important; }
+    .r-header h1 { font-size: 20px; overflow-wrap: anywhere; }
+    .r-card { padding: 16px 14px; }
+    .r-field { min-width: 0; flex: 1 1 100%; }
+    .r-field input, .r-btn, .r-btn-ghost { min-height: 48px; }
+    .r-btn { justify-content: center; }
+    .r-form-row .r-btn { width: 100%; }
+    .r-auth-wrap { margin-top: 28px; padding: 0 14px; }
+    .r-auth-card { padding: 22px 18px; }
+    .r-child-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+    .r-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .r-btn-revisar { width: 44px; height: 44px; }
+    .r-chart-tabs { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+    .r-chart-tab { flex: 0 0 auto; min-height: 44px; }
+    .r-chart-wrapper { height: 240px; }
+    .r-task { padding: 12px; gap: 10px; }
+    .r-task-text { min-width: 0; overflow-wrap: anywhere; }
+}
+
+/* ============================================================
+   LOGIN / CADASTRO / SETUP DE PERFIL / NOVA SENHA
+   ============================================================ */
+@media (max-width: 700px) {
+    body:has(.login-card, .auth-card, .setup-card) { padding-left: 12px; padding-right: 12px; }
+}
+
+/* ============================================================
+   QUEBRA DE LINHA DOS TEXTOS (todas as telas)
+   "pretty" evita palavra sozinha na última linha; "balance" deixa
+   títulos e textos curtos com linhas de tamanho parecido.
+   ============================================================ */
+body { text-wrap: pretty; }
+h1, h2, h3, h4, .section-eyebrow, .modal-box h3, .hub-header p, .hud-header p,
+.guia-compacto span, .mood-content p, .item-info span, .nav-card p, .ai-message,
+.checklist-vazio, .empty-state, .sugestao-card, .cp-empty, .com-vazio, .r-header p {
+    text-wrap: balance;
+}
+.disciplina-nome, .com-msg, .meta-item-text, .com-pessoa-info, .profile-bio, .bio-text,
+.checklist-nome, .tarefa-nome { overflow-wrap: anywhere; }
+
+/* ============================================================
+   ENTRADA DE TEXTO NO CELULAR (teclado)
+   Enquanto o teclado está aberto a barra de baixo some, pra não cobrir o
+   campo nem ficar boiando em cima do teclado.
+   ============================================================ */
+@media (max-width: 900px) {
+    body:has(textarea:focus, input:is([type="text"], [type="email"], [type="password"], [type="search"], [type="number"], [type="url"], [type="tel"], :not([type])):focus) .nav-links {
+        display: none !important;
+    }
+    input, textarea, select { scroll-margin-block: 96px; }
+}
+
+/* ============================================================
+   CARD CENTRALIZADO: PERFIL / COMPLETAR PERFIL / EDITAR PERFIL
+   Centraliza na vertical quando cabe; se não couber, começa no topo e rola
+   (margem automática nunca corta o topo). dvh = altura real da tela do celular.
+   ============================================================ */
+@media (max-width: 700px) {
+    body:has(.profile-card), body:has(.edit-card) {
+        min-height: 100vh; min-height: 100dvh;
+        display: flex; justify-content: center; align-items: flex-start;
+        padding: 16px 12px calc(16px + env(safe-area-inset-bottom, 0px));
+    }
+    .profile-card, .edit-card { margin-block: auto; width: 100%; }
+
+    /* espaçamento "meio termo" dentro do card */
+    .edit-card .section-title { margin: 22px 0 10px; }
+    .edit-card .input-group { margin-bottom: 16px; }
+    .edit-card .input-group label { margin-bottom: 8px; }
+    .edit-card .avatars-grid { margin-bottom: 22px; }
+    .edit-card .header-edit { margin-bottom: 8px; }
+    .edit-card .setup-hint { margin: 0 0 18px; }
+    .edit-card .btn-save { margin-top: 8px; }
+    /* a prévia "@usuario" ocupa o vão entre o campo e o botão: aparece sem empurrar o card */
+    .edit-card .input-group:has(.username-preview) { position: relative; }
+    .username-preview { position: absolute; left: 6px; bottom: -22px; min-height: 0; margin: 0; line-height: 1.2; }
+    .username-preview:empty { display: none; }
+    .profile-card .profile-divider, .profile-card hr { margin: 18px 0; }
+}
+
+/* ============================================================
+   TRILHAS SONORAS: carrossel horizontal no celular
+   ============================================================ */
+@media (max-width: 700px) {
+    .sound-tracks-grid {
+        display: flex; grid-template-columns: none; gap: 10px;
+        overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+        padding: 4px 2px 12px; scrollbar-width: none; overscroll-behavior-x: contain;
+    }
+    .sound-tracks-grid::-webkit-scrollbar { display: none; }
+    .sound-track-card { flex: 0 0 38%; min-width: 118px; min-height: 96px; scroll-snap-align: start; justify-content: center; }
+}
+
+/* ============================================================
+   TEMAS: sem setas no celular, troca deslizando o dedo
+   ============================================================ */
+@media (max-width: 700px) {
+    .theme-nav { display: none; }
+    .theme-slider { gap: 0; }
+    .theme-viewport { touch-action: pan-y; }
+}
+
+/* ============================================================
+   SIMPLIFICAÇÃO DO CELULAR — menos coisa na tela, navegação direta
+   (os mesmos destinos já estão na barra de baixo)
+   ============================================================ */
+@media (max-width: 700px) {
+    /* textos de apoio e avisos que só ocupam espaço */
+    .guia-compacto, #premiumInfoBanner, .dica-arrastar,
+    .setting-item[style*="opacity: 0.55"] { display: none !important; }
+    .hud-header:has(.header-avatar) p { display: none; }
+    .hud-header:has(.header-avatar) .header-avatar { display: none; }
+    .hud-header:has(.header-avatar) h1 { font-size: 28px; }
+    .hud-header:has(.header-avatar) { margin-bottom: 8px; }
+
+    /* Início: o "acesso rápido" vira uma grade 2x2 só com ícone + nome */
+    .nav-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+    .nav-card {
+        display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        padding: 20px 10px; gap: 10px; min-height: 124px; border-left-width: 6px !important;
+    }
+    .nav-card i { grid-row: auto; margin: 0; width: 52px; height: 52px; }
+    .nav-card h3 { margin: 0; align-self: auto; font-size: 16px; }
+    .nav-card p { display: none; }
+    .mood-content p { display: none; }
+    .mood-card { padding: 20px 16px; gap: 14px; }
+    .battery-outer { width: 64px; height: 120px; }
+
+    /* Desempenho: as 3 métricas numa linha só */
+    .metrics-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .metric-card { flex-direction: column; text-align: center; padding: 14px 6px; gap: 4px; border-radius: 18px; }
+    .metric-icon { display: none; }
+    .metric-card h3 { font-size: 22px; }
+    .metric-card p, .metric-card span { font-size: 10px; letter-spacing: .3px; }
+}

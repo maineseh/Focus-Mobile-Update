@@ -1,0 +1,319 @@
+/* Página de planos — só apresentação (nada aqui cobra ou libera recurso). */
+.planos-hero { text-align: center; max-width: 620px; margin: 0 auto 36px; }
+.planos-hero h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.5px; color: var(--text); margin-bottom: 8px; }
+.planos-hero p { color: var(--text-soft); font-size: 15.5px; font-weight: 600; line-height: 1.5; }
+
+.planos-abas { display: none; }
+
+.planos-grid {
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px;
+    align-items: stretch; padding-top: 16px;
+}
+
+.plano-card {
+    position: relative; display: flex; flex-direction: column;
+    background: var(--card-bg); color: var(--text);
+    border: 1px solid var(--border); border-radius: 28px; padding: 30px 28px 28px;
+    border-color: color-mix(in srgb, var(--pc) 50%, var(--border));
+}
+.plano-card.destaque {
+    border: 2px solid var(--pc);
+    box-shadow: 0 16px 36px color-mix(in srgb, var(--pc) 28%, transparent);
+}
+.plano-selo {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%); white-space: nowrap;
+    padding: 5px 14px; border-radius: 30px; font-size: 12px; font-weight: 800;
+    background: var(--pc); color: #1a1a1a;
+}
+
+.plano-topo { text-align: center; margin-bottom: 26px; }
+.plano-gato { width: 112px; height: 112px; margin: 0 auto 8px; }
+.gato-svg { width: 100%; height: 100%; display: block; overflow: visible; }
+.plano-nome { font-size: 20px; font-weight: 800; color: var(--text); }
+.plano-desc { font-size: 13.5px; font-weight: 600; color: var(--text-soft); margin-top: 4px; }
+.plano-preco { margin-top: 16px; display: flex; align-items: baseline; justify-content: center; gap: 4px; color: var(--text); }
+.plano-preco b { font-size: 40px; font-weight: 900; letter-spacing: -1px; }
+.plano-preco small { font-size: 14px; font-weight: 700; color: var(--text-soft); }
+
+.plano-lista { list-style: none; margin: 0 0 28px; padding: 0; display: flex; flex-direction: column; gap: 12px; flex: 1; }
+.plano-lista li { display: flex; align-items: flex-start; gap: 10px; font-size: 14.5px; font-weight: 600; line-height: 1.4; color: var(--text); }
+.plano-lista .ico { flex: 0 0 16px; margin-top: 3px; font-size: 13px; color: var(--pc); text-align: center; }
+.plano-lista li.nao { color: var(--text-soft); opacity: 0.7; }
+.plano-lista li.nao:first-of-type, .plano-lista li:not(.nao) + li.nao { margin-top: 6px; padding-top: 14px; border-top: 1px solid var(--border); }
+.plano-lista li.nao .ico { color: var(--text-soft); }
+
+.plano-btn {
+    width: 100%; min-height: 50px; padding: 12px 18px; border-radius: 16px; cursor: pointer;
+    font: inherit; font-size: 15px; font-weight: 800; transition: var(--transition);
+    display: flex; align-items: center; justify-content: center;
+    background: transparent; color: var(--text); border: 2px solid var(--border);
+}
+.plano-btn { border-color: var(--pc); }
+.plano-btn:hover { background: color-mix(in srgb, var(--pc) 18%, transparent); transform: translateY(-1px); }
+.plano-card.destaque .plano-btn { background: var(--pc); border-color: var(--pc); color: #1a1a1a; }
+.plano-card.destaque .plano-btn:hover { filter: brightness(1.05); }
+.plano-btn.atual, .plano-btn.atual:hover {
+    cursor: default; transform: none; background: transparent; color: var(--text-soft);
+    border: 2px solid var(--border); filter: none;
+}
+.plano-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+.planos-aviso { max-width: 560px; margin: 32px auto 0; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--text-soft); opacity: 0.85; }
+
+.planos-toast {
+    position: fixed; left: 50%; bottom: var(--toast-bottom, 30px); transform: translate(-50%, 20px);
+    max-width: calc(100vw - 32px); padding: 14px 20px; border-radius: 18px; z-index: 9500;
+    display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 14px;
+    background: var(--nav-bg); color: #fff; border: 2px solid var(--accent);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25); opacity: 0; pointer-events: none; transition: 0.35s ease;
+}
+.planos-toast i { color: var(--accent-on-nav, var(--accent)); }
+.planos-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+body.high-contrast .plano-card, body.high-contrast .plano-btn { border-color: #ffe600 !important; }
+body.high-contrast .plano-card.destaque .plano-btn, body.high-contrast .plano-selo, body.high-contrast .plano-aba.ativa { color: #000 !important; background: #ffe600 !important; }
+
+/* Tablet e celular: abas no topo e um plano por vez */
+@media (max-width: 900px) {
+    .planos-hero { margin-bottom: 22px; }
+    .planos-hero h1 { font-size: 28px; }
+    .planos-hero p { font-size: 14.5px; }
+
+    .planos-abas {
+        display: flex; gap: 4px; padding: 4px; max-width: 520px; margin: 0 auto 26px;
+        background: var(--btn-bg); border: 1px solid var(--border); border-radius: 18px;
+    }
+    .plano-aba {
+        flex: 1; min-height: 44px; border: 0; border-radius: 14px; cursor: pointer;
+        background: transparent; color: var(--text-soft); font: inherit; font-size: 14.5px; font-weight: 800;
+        transition: var(--transition);
+    }
+    .plano-aba.ativa { background: var(--pc); color: #1a1a1a; }
+    .plano-aba:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+    .planos-grid { grid-template-columns: minmax(0, 1fr); max-width: 520px; margin: 0 auto; padding-top: 14px; }
+    .planos-grid.com-abas .plano-card { display: none; }
+    .planos-grid.com-abas .plano-card.visivel { display: flex; animation: planoEntra 0.3s ease; }
+}
+@keyframes planoEntra { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+body.reduce-motion .plano-card { animation: none !important; }
+
+@media (max-width: 480px) {
+    .plano-card { padding: 28px 20px 22px; border-radius: 24px; }
+    .plano-preco b { font-size: 36px; }
+    .plano-gato { width: 100px; height: 100px; }
+    .plano-lista li { font-size: 14px; }
+}
+
+
+/* ============================================================
+   POLIMENTO VISUAL — só aparência (cores, fundos, sombras, detalhes)
+   ============================================================ */
+:root { --pata: url("../img/pata.svg"); }
+
+/* Topo: trilha de patinhas + título com marca-texto */
+.hero-patas { display: flex; justify-content: center; align-items: flex-end; gap: 10px; margin-bottom: 6px; }
+.hero-patas i {
+    width: 22px; height: 22px; background: var(--c, #4caf7d);
+    -webkit-mask: var(--pata) center / contain no-repeat; mask: var(--pata) center / contain no-repeat;
+}
+.hero-patas i:nth-child(1) { --c: #4caf7d; transform: rotate(-22deg) translateY(4px); }
+.hero-patas i:nth-child(2) { --c: #5b8fd1; transform: rotate(4deg) translateY(-3px); width: 26px; height: 26px; }
+.hero-patas i:nth-child(3) { --c: #f2b035; transform: rotate(24deg) translateY(4px); }
+.planos-hero h1 { font-size: 40px; line-height: 1.1; }
+.planos-hero p { max-width: 480px; margin: 0 auto; }
+
+/* Cartões: todos IGUAIS em tamanho, borda e alinhamento. O destaque do Premium
+   fica só na cor da borda e no selo (nada de subir, nada de brilho vazando). */
+.plano-card {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 13%, var(--card-bg)) 0, var(--card-bg) 240px);
+    border: 2px solid color-mix(in srgb, var(--pc) 55%, var(--border));
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+    transition: transform 0.35s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.35s ease;
+}
+.plano-card.destaque {
+    border: 2px solid var(--pc);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--pc) 16%, var(--card-bg)) 0, var(--card-bg) 240px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+.plano-card::after {
+    content: ''; position: absolute; top: 18px; right: 18px; width: 54px; height: 54px; pointer-events: none;
+    background: var(--pc); opacity: 0.16; transform: rotate(18deg);
+    -webkit-mask: var(--pata) center / contain no-repeat; mask: var(--pata) center / contain no-repeat;
+}
+.plano-card > * { position: relative; z-index: 1; }
+.plano-card > .plano-selo { position: absolute; z-index: 2; }
+.plano-topo { margin-bottom: 24px; }
+.plano-topo::after {
+    content: ''; display: block; height: 1px; margin: 24px 6px 0;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.plano-nome { font-size: 24px; letter-spacing: -0.3px; }
+.plano-preco { margin-top: 12px; }
+.plano-preco b { font-family: 'Baloo 2', 'Nunito', sans-serif; font-size: 46px; line-height: 1; }
+.plano-preco small:first-child { color: var(--pc); font-size: 16px; font-weight: 800; align-self: flex-start; margin-top: 8px; }
+.plano-selo { background: linear-gradient(135deg, #ffd978, #f2b035); box-shadow: none; letter-spacing: 0.3px; }
+
+/* Botões: o MESMO botão nos três cards (mesmo tamanho, cor e formato) */
+.plano-btn,
+.plano-btn:hover,
+.plano-card.destaque .plano-btn,
+.plano-card.destaque .plano-btn:hover {
+    width: 100%; min-height: 52px; padding: 12px 18px; border-radius: 16px; gap: 8px;
+    font-size: 15px; font-weight: 800; letter-spacing: 0.2px;
+    background: var(--accent); color: var(--on-accent, #1a1a1a);
+    border: 2px solid var(--accent); box-shadow: none; filter: none;
+}
+.plano-btn:hover:not(:disabled) { transform: translateY(-2px); filter: brightness(1.07); }
+.plano-btn:disabled, .plano-btn:disabled:hover { cursor: default; transform: none; filter: none; opacity: 0.85; }
+body.high-contrast .plano-btn { background: #ffe600 !important; color: #000 !important; border-color: #ffe600 !important; }
+
+.planos-aviso { padding-top: 6px; }
+
+/* PC: cartões entram em sequência e sobem um pouco ao passar o mouse (todos iguais) */
+@media (min-width: 901px) {
+    @media (hover: hover) {
+        .plano-card:hover { transform: translateY(-5px); box-shadow: 0 12px 24px rgba(0,0,0,0.12); }
+    }
+    .plano-card { animation: planoSobe 0.7s cubic-bezier(0.165, 0.84, 0.44, 1) both; }
+    .plano-card:nth-child(2) { animation-delay: 0.08s; }
+    .plano-card:nth-child(3) { animation-delay: 0.16s; }
+}
+@keyframes planoSobe { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+/* ============================================================
+   Uma animação diferente em cada gatinho
+   Grátis: o brotinho balança  ·  Básico: a lâmpada pulsa e acende
+   Premium: o chapéu de mago dá um pulinho e a estrelinha brilha
+   ============================================================ */
+.gato-svg g, .gato-svg path { transform-box: fill-box; }
+.an-broto { transform-origin: 50% 100%; animation: brotoBalanca 3.2s ease-in-out infinite; }
+@keyframes brotoBalanca { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(8deg); } }
+
+.an-lampada { transform-box: view-box; transform-origin: 0 -9px; animation: lampadaBalanca 3.6s ease-in-out infinite; }
+@keyframes lampadaBalanca { 0%, 100% { transform: rotate(-6deg); } 50% { transform: rotate(6deg); } }
+.an-lampada-luz { animation: lampadaLuz 2.4s ease-in-out infinite; }
+@keyframes lampadaLuz { 0%, 100% { opacity: 0; } 50% { opacity: 0.75; } }
+
+.an-coroa { transform-origin: 50% 100%; animation: coroaPula 2.8s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+@keyframes coroaPula { 0%, 55%, 100% { transform: translateY(0) rotate(0); } 70% { transform: translateY(-5px) rotate(-4deg); } 85% { transform: translateY(0) rotate(3deg); } }
+.an-brilho { transform-origin: 50% 50%; animation: brilhoPisca 2s ease-in-out infinite; }
+@keyframes brilhoPisca { 0%, 100% { transform: scale(0.6) rotate(0); opacity: 0.5; } 50% { transform: scale(1.25) rotate(25deg); opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) { .an-broto, .an-lampada, .an-lampada-luz, .an-coroa, .an-brilho { animation: none !important; } }
+body.reduce-motion .plano-card, body.reduce-motion .an-broto, body.reduce-motion .an-lampada,
+body.reduce-motion .an-lampada-luz, body.reduce-motion .an-coroa, body.reduce-motion .an-brilho { animation: none !important; }
+
+@media (max-width: 480px) {
+    .planos-hero h1 { font-size: 32px; }
+    .plano-preco b { font-size: 42px; }
+    .plano-card::after { width: 46px; height: 46px; top: 16px; right: 14px; }
+}
+
+
+/* ============================================================
+   Fase de cada gatinho + ajustes de celular (nomes maiores nas abas)
+   ============================================================ */
+.plano-fase {
+    display: inline-flex; align-items: center; gap: 6px; margin: 4px 0 10px; padding: 5px 13px;
+    border-radius: 30px; font-size: 12.5px; font-weight: 800; letter-spacing: 0.2px;
+    color: var(--text); background: color-mix(in srgb, var(--pc) 20%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pc) 45%, transparent);
+}
+.plano-fase i { color: var(--pc); font-size: 12px; }
+.plano-desc { max-width: 280px; margin-left: auto; margin-right: auto; line-height: 1.45; }
+body.high-contrast .plano-fase { border-color: #ffe600 !important; background: transparent !important; }
+body.high-contrast .plano-fase i { color: #ffe600 !important; }
+
+@media (max-width: 900px) {
+    .plano-aba { line-height: 1.15; padding: 6px 4px; overflow-wrap: anywhere; }
+}
+@media (max-width: 480px) {
+    .planos-hero h1 { font-size: 28px; }
+    .plano-aba { font-size: 12.5px; min-height: 48px; }
+    .plano-btn { font-size: 14px; padding: 10px 12px; text-align: center; line-height: 1.2; }
+}
+@media (max-width: 340px) {
+    .plano-aba { font-size: 11.5px; }
+    .planos-hero h1 { font-size: 25px; }
+}
+
+/* ============================================================
+   Mesma fonte e mesmo estilo nos três planos; só o NOME muda de cor.
+   A cor mistura --pc com --text, então fica legível em qualquer tema.
+   ============================================================ */
+.plano-nome { color: color-mix(in srgb, var(--pc) 62%, var(--text)); }
+body.high-contrast .plano-nome { color: var(--text) !important; }
+
+
+/* ============================================================
+   DESKTOP: tudo cabe numa tela só (sem rolar) e dá pra tirar print dos 3 planos.
+   Só vale em telas largas; no celular/tablet continuam as abas, uma por vez.
+   ============================================================ */
+@media (min-width: 901px) {
+    .planos-pagina { padding-top: 14px !important; padding-bottom: 12px !important; }
+    .planos-hero { margin-bottom: 8px; max-width: 720px; }
+    .hero-patas { display: none; }
+    .planos-hero h1 { font-size: 28px; margin-bottom: 2px; }
+    .planos-hero p { font-size: 13.5px; line-height: 1.35; max-width: 640px; }
+    .planos-grid { gap: 18px; padding-top: 12px; max-width: 1280px; margin: 0 auto; }
+
+    .plano-card { padding: 16px 22px 16px; border-radius: 24px; }
+    .plano-card::after { width: 40px; height: 40px; top: 12px; right: 14px; }
+    .plano-topo { margin-bottom: 10px; }
+    .plano-topo::after { margin: 10px 6px 0; }
+    .plano-gato { width: 72px; height: 72px; margin-bottom: 4px; }
+    .plano-fase { margin: 2px 0 6px; padding: 3px 11px; font-size: 11.5px; }
+    .plano-nome { font-size: 20px; }
+    .plano-desc { font-size: 12.5px; line-height: 1.35; margin-top: 2px; max-width: 300px; min-height: 2.7em; }
+    .plano-preco { margin-top: 6px; }
+    .plano-preco b { font-size: 36px; }
+    .plano-preco small { font-size: 13px; }
+    .plano-preco small:first-child { font-size: 14px; margin-top: 4px; }
+
+    .plano-lista { gap: 6px; margin-bottom: 12px; }
+    .plano-lista li { font-size: 13.5px; line-height: 1.25; }
+    .plano-lista .ico { margin-top: 2px; font-size: 12px; }
+    .plano-btn, .plano-btn:hover, .plano-card.destaque .plano-btn, .plano-card.destaque .plano-btn:hover {
+        min-height: 42px; padding: 8px 14px; font-size: 14px; border-radius: 14px;
+    }
+    .planos-aviso { margin-top: 10px; font-size: 11.5px; padding-top: 0; }
+}
+/* Telas médias (1440x900, 1366x768...): tira o texto de apoio pra continuar cabendo */
+@media (min-width: 901px) and (max-height: 1000px) {
+    .planos-hero p { display: none; }
+    .plano-fase { display: none; }
+    .plano-desc { display: none; }
+    .plano-gato { width: 60px; height: 60px; }
+    .plano-lista { gap: 5px; }
+    .plano-lista li { font-size: 13px; }
+}
+/* Telas baixas (notebooks): aperta mais um pouco pra continuar cabendo */
+@media (min-width: 901px) and (max-height: 840px) {
+    .planos-pagina { padding-top: 6px !important; }
+    .planos-hero { margin-bottom: 2px; }
+    .planos-hero h1 { font-size: 22px; }
+    .planos-hero p { display: none; }
+    .planos-grid { padding-top: 10px; gap: 14px; }
+    .plano-card { padding: 12px 18px 12px; }
+    .plano-gato { width: 44px; height: 44px; margin-bottom: 2px; }
+    .plano-fase { display: none; }
+    .plano-desc { display: none; }
+    .plano-topo { margin-bottom: 6px; }
+    .plano-topo::after { margin-top: 6px; }
+    .plano-nome { font-size: 18px; }
+    .plano-preco { margin-top: 2px; }
+    .plano-preco b { font-size: 28px; }
+    .plano-lista { gap: 3px; margin-bottom: 8px; }
+    .plano-lista li { font-size: 12.5px; line-height: 1.2; }
+    .plano-btn, .plano-btn:hover, .plano-card.destaque .plano-btn, .plano-card.destaque .plano-btn:hover { min-height: 36px; padding: 6px 12px; font-size: 13px; }
+    .planos-aviso { display: none; }
+}
+
+/* Telas estreitas de PC (≈1024px): textos um pouco menores pra nada quebrar linha à toa */
+@media (min-width: 901px) and (max-width: 1100px) {
+    .planos-grid { gap: 10px; }
+    .plano-card { padding-left: 12px; padding-right: 12px; }
+    .plano-lista li { font-size: 12px !important; gap: 6px; }
+    .plano-lista { gap: 3px !important; }
+}

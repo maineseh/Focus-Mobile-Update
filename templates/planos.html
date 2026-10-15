@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+    <meta name="view-transition" content="same-origin">
+    <title>Planos - Focus OS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/accessibility.css') }}">
+    <script src="{{ url_for('static', filename='js/accessibility.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/soundtrack.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/mini_player.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/atividade.js') }}" defer></script>
+    <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
+    <script src="{{ url_for('static', filename='js/spa.js') }}" defer></script>
+</head>
+
+<body hx-boost="true">
+    <script>(function(){var t=localStorage.getItem('focus_theme');if(t&&t!=='default')document.body.classList.add(t+'-theme');})();</script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/mobile.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/planos_nav.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/planos.css') }}">
+
+    <nav class="navbar-main">
+        <div class="nav-content">
+           <a href="{{ url_for('dashboard') }}" class="nav-brand">
+
+<img src="{{ url_for('static', filename='img/cat-192.png') }}" class="nav-logo" alt="Logo Focus">
+
+<span class="brand-text">Focus</span>
+
+</a>
+            <ul class="nav-links">
+                <li><a href="{{ url_for('dashboard') }}"><i class="fa-solid fa-house"></i> Início</a></li>
+                <li><a href="{{ url_for('meus_estudos') }}"><i class="fa-solid fa-graduation-cap"></i> Estudos</a></li>
+                <li><a href="{{ url_for('comunidades') }}"><i class="fa-solid fa-users"></i> Comunidades</a></li>
+                <li><a href="{{ url_for('meu_desempenho') }}"><i class="fa-solid fa-chart-line"></i> Desempenho</a></li>
+                <li><a href="{{ url_for('agenda') }}"><i class="fa-solid fa-bullseye"></i> Metas</a></li>
+            </ul>
+            <div class="profile-container">
+                <a href="{{ url_for('planos') }}" class="nav-planos" aria-label="Ver planos"><i class="nav-gato" aria-hidden="true"></i><span>Planos</span></a>
+                <div class="profile-trigger" onclick="toggleDropdown()">
+                    <span>@{{ username_exibir }}</span>
+                    <div class="nav-avatar-wrap">
+                        <img src="{{ url_for('static', filename=foto_perfil) }}" class="profile-img">
+                        <span class="nav-status-dot status-{{ status }}"></span>
+                    </div>
+                </div>
+                <div class="dropdown-menu" id="userDropdown">
+                    <a href="{{ url_for('perfil') }}" class="dropdown-item"><i class="fa-solid fa-user"></i> Perfil</a>
+                    <a href="{{ url_for('configuracoes') }}" class="dropdown-item"><i class="fa-solid fa-gear"></i> Configurações</a>
+                    <a href="{{ url_for('controle_parental') }}" class="dropdown-item"><i class="fa-solid fa-user-shield"></i> Controle Parental</a>
+                    <a href="{{ url_for('logout') }}" class="dropdown-item" style="color: var(--danger-text, #ff4d4d);" hx-boost="false"><i class="fa-solid fa-power-off"></i> Sair</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+{% macro gato(p) %}
+<svg class="gato-svg" viewBox="0 0 120 120" role="img" aria-label="{{ p.nome }}" xmlns="http://www.w3.org/2000/svg">
+    <defs><clipPath id="recorte-{{ p.chave }}"><rect width="120" height="120" rx="26"/></clipPath></defs>
+    <g clip-path="url(#recorte-{{ p.chave }})">
+        <image href="{{ url_for('static', filename='img/' ~ p.img) }}" width="120" height="120" preserveAspectRatio="xMidYMid slice"/>
+    </g>
+    {% if p.chave == 'gratis' %}
+    <g transform="translate(0 16)">
+        <g class="an-broto">
+            <path d="M60 50 Q60 41 60 33" fill="none" stroke="#2f8f5f" stroke-width="3" stroke-linecap="round"/>
+            <path d="M60 37 Q50 35 48 25 Q58 24 60 37Z" fill="#2f9d68" stroke="#1e6b45" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M60 34 Q70 31 73 21 Q62 21 60 34Z" fill="#6fd09b" stroke="#1e6b45" stroke-width="1.2" stroke-linejoin="round"/>
+        </g>
+    </g>
+    {% elif p.chave == 'basico' %}
+    <g transform="translate(93 27) rotate(15) scale(1.35)">
+        <g class="an-lampada">
+            <circle class="an-lampada-luz" r="14" fill="#ffe680" opacity="0"/>
+            <circle r="9" fill="#ffe680" stroke="#17171c" stroke-width="1.6"/>
+            <path d="M-2.5 4 L-1.2 -2 L0 0 L1.2 -2 L2.5 4" fill="none" stroke="#17171c" stroke-width="1"/>
+            <rect x="-4.5" y="8" width="9" height="5.5" rx="1.5" fill="{{ p.cor }}" stroke="#17171c" stroke-width="1.4"/>
+        </g>
+    </g>
+    {% else %}
+    <g class="an-coroa">
+        <ellipse cx="60" cy="67.5" rx="27" ry="5.5" fill="#9aa0ab" stroke="#4b505a" stroke-width="1.8"/>
+        <path d="M43 67 C48 58 52 44 56 34 C58 28 64 24 73 26 C69 29 68 32 68 37 C68 47 71 58 77 67 Z" fill="#8d939e" stroke="#4b505a" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M45.5 62.5 Q60 66.5 75 62.5 L77 67 Q60 71 43 67 Z" fill="#5a606b" stroke="#4b505a" stroke-width="1" stroke-linejoin="round"/>
+        <rect x="56.5" y="63" width="7" height="5.2" rx="1" fill="none" stroke="#f2b035" stroke-width="1.4"/>
+    </g>
+    <path class="an-brilho" d="M22 22 L23.6 27 L28.6 28.6 L23.6 30.2 L22 35 L20.4 30.2 L15.4 28.6 L20.4 27 Z" fill="#fff"/>
+    {% endif %}
+</svg>
+{% endmacro %}
+
+{% set planos = [
+    {
+        'chave': 'gratis', 'cor': '#4caf7d', 'pastel': '#d9f2e4', 'nome': 'Gatito Curioso', 'img': 'plano-gatito-curioso.png',
+        'fase': 'Começando a explorar', 'icone': 'fa-seedling', 'preco': '0,00', 'periodo': '',
+        'desc': 'Fareja tudo com curiosidade e dá os primeiros passinhos na organização dos estudos.',
+        'itens': [
+            '4 módulos com 4 disciplinas cada', '2 microtarefas por dia', '2 atualizações de estudo por dia',
+            '6 amigos e 2 grupos para estudar junto', 'Gráfico das horas de estudo na semana',
+            '1 meta por dia, com 1 atualização', 'Histórico dos últimos 30 dias', '3 temas visuais',
+            '1 trilha sonora para concentração'
+        ],
+        'nao': []
+    },
+    {
+        'chave': 'basico', 'cor': '#5b8fd1', 'pastel': '#dce9fa', 'nome': 'Gatinho Aprendiz', 'img': 'plano-gatinho-aprendiz.png',
+        'fase': 'Aprendendo com gosto', 'icone': 'fa-lightbulb', 'preco': '12,00', 'periodo': '/mês',
+        'desc': 'Já pegou o jeito e teve boas ideias: mais espaço, inteligência artificial e personalização.',
+        'itens': [
+            '6 módulos com 6 disciplinas cada', '2 tarefas recorrentes por dia', '3 microtarefas por dia',
+            '3 atualizações de estudo por dia', '12 amigos e 4 grupos', 'Recursos de inteligência artificial',
+            'Histórico dos últimos 3 meses', 'Foto de perfil personalizada', '8 temas visuais',
+            '3 músicas para concentração'
+        ],
+        'nao': []
+    },
+    {
+        'chave': 'premium', 'cor': '#f2b035', 'pastel': '#ffeab8', 'nome': 'Gato Mestre', 'img': 'plano-gato-mestre.png',
+        'fase': 'Mestre da rotina', 'icone': 'fa-hat-wizard', 'preco': '20,00', 'periodo': '/mês',
+        'desc': 'A experiência completa do Focus, para quem já domina a rotina de estudos como um mestre.',
+        'itens': [
+            '8 módulos com 8 disciplinas cada', '4 tarefas recorrentes por dia', '4 microtarefas por dia',
+            '4 atualizações de estudo por dia', '24 amigos e 6 grupos', 'Recursos ampliados de inteligência artificial',
+            'Histórico dos últimos 6 meses', 'Foto de perfil personalizada ou GIF', '16 temas visuais',
+            '6 músicas para concentração, com piano', 'Tempo de conclusão das tarefas personalizável',
+            'Tarefas atribuídas pelos responsáveis'
+        ],
+        'nao': []
+    }
+] %}
+
+    <main class="container planos-pagina">
+        <header class="planos-hero">
+            <div class="hero-patas" aria-hidden="true"><i></i><i></i><i></i></div>
+            <h1>Qual gatinho combina com você?</h1>
+            <p>Compare o que cada plano oferece e escolha o companheiro certo para a sua rotina de estudos.</p>
+        </header>
+
+        <div class="planos-abas" role="tablist" aria-label="Escolher plano">
+            {% for p in planos %}
+            <button type="button" role="tab" class="plano-aba" style="--pc: {{ p.cor }};" data-alvo="plano-{{ p.chave }}" aria-selected="false">{{ p.nome }}</button>
+            {% endfor %}
+        </div>
+
+        <section class="planos-grid" aria-label="Planos do Focus">
+            {% for p in planos %}
+            {% set eh_atual = (p.chave == 'gratis' and not premium) or (p.chave == 'premium' and premium) %}
+            <article class="plano-card{% if p.chave == 'premium' %} destaque{% endif %}{% if eh_atual %} atual-plano{% endif %}" id="plano-{{ p.chave }}" style="--pc: {{ p.cor }}; --pcs: {{ p.pastel }};">
+                {% if p.chave == 'premium' %}<span class="plano-selo">Mais completo</span>{% endif %}
+
+                <div class="plano-topo">
+                    <div class="plano-gato">{{ gato(p) }}</div>
+                    <span class="plano-fase"><i class="fa-solid {{ p.icone }}" aria-hidden="true"></i> {{ p.fase }}</span>
+                    <h2 class="plano-nome">{{ p.nome }}</h2>
+                    <p class="plano-desc">{{ p.desc }}</p>
+                    <div class="plano-preco"><small>R$</small><b>{{ p.preco }}</b>{% if p.periodo %}<small>{{ p.periodo }}</small>{% endif %}</div>
+                </div>
+
+                <ul class="plano-lista">
+                    {% for item in p['itens'] %}
+                    <li><i class="fa-solid fa-check ico"></i><span>{{ item }}</span></li>
+                    {% endfor %}
+                    {% for item in p['nao'] %}
+                    <li class="nao"><i class="fa-solid fa-xmark ico"></i><span>{{ item }}</span></li>
+                    {% endfor %}
+                </ul>
+
+                {% if eh_atual %}
+                <button type="button" class="plano-btn" disabled aria-disabled="true"><i class="fa-solid fa-circle-check"></i> Plano atual</button>
+                {% else %}
+                <button type="button" class="plano-btn" data-demo="{{ p.nome }}"><i class="fa-solid fa-arrow-right"></i> {{ 'Usar' if p.chave == 'gratis' else 'Assinar' }} {{ p.nome }}</button>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </section>
+
+        <p class="planos-aviso">Por enquanto esta página é só para dar uma espiadinha. As assinaturas ainda não estão disponíveis para contratação.</p>
+    </main>
+
+    <div class="planos-toast" id="planosToast" role="status" aria-live="polite"><i class="fa-solid fa-hourglass-half"></i><span id="planosToastTxt"></span></div>
+
+    <script>
+        function toggleDropdown() { document.getElementById('userDropdown').classList.toggle('show'); }
+        window.onclick = (e) => { if (!e.target.closest('.profile-container')) { var d = document.getElementById('userDropdown'); if (d) d.classList.remove('show'); } };
+
+        // Celular/tablet: um plano por vez (abas). Sem JS, todos os cartões continuam visíveis.
+        (function () {
+            var abas = document.querySelectorAll('.plano-aba'), cards = document.querySelectorAll('.plano-card');
+            if (!abas.length) return;
+            document.querySelector('.planos-grid').classList.add('com-abas');
+            function mostrar(id) {
+                abas.forEach(function (a) { var on = a.dataset.alvo === id; a.classList.toggle('ativa', on); a.setAttribute('aria-selected', on); });
+                cards.forEach(function (c) { c.classList.toggle('visivel', c.id === id); });
+            }
+            abas.forEach(function (a) { a.addEventListener('click', function () { mostrar(a.dataset.alvo); }); });
+            var atual = document.querySelector('.plano-card.atual-plano');
+            mostrar(atual ? atual.id : 'plano-premium');
+        })();
+
+        // Botões demonstrativos: não cobram nem alteram a assinatura, só avisam.
+        (function () {
+            var toast = document.getElementById('planosToast'), txt = document.getElementById('planosToastTxt'), t;
+            document.querySelectorAll('.plano-btn[data-demo]').forEach(function (b) {
+                b.addEventListener('click', function () {
+                    txt.textContent = b.dataset.demo === 'Gatito Curioso' ? 'O Gatito Curioso é o plano que você usa sem assinar nada.' : 'O ' + b.dataset.demo + ' ainda está se preparando: a assinatura ainda não está disponível.';
+                    toast.classList.add('show');
+                    clearTimeout(t);
+                    t = setTimeout(function () { toast.classList.remove('show'); }, 3200);
+                });
+            });
+        })();
+    </script>
+</body>
+
+</html>

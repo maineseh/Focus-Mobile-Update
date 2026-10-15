@@ -1,0 +1,29 @@
+# Blueprint do Render: com este arquivo na RAIZ do repositório, o Render cria
+# o serviço sozinho (New > Blueprint), sem precisar preencher nada na mão.
+services:
+  - type: web
+    name: focus
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # 1 worker: o banco é SQLite e vários workers escrevendo ao mesmo tempo dão "database is locked".
+    # timeout 60: sobra tempo pras chamadas da IA (cada uma espera até 15s).
+    startCommand: gunicorn app:app --workers 1 --threads 4 --timeout 60 --bind 0.0.0.0:$PORT
+    healthCheckPath: /login
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.3
+      # chave das sessões: o Render gera uma aleatória e mantém entre os deploys
+      - key: FOCUS_SECRET_KEY
+        generateValue: true
+      # chave da IA (Gemini). O Render pede o valor na criação: cole a chave de
+      # aistudio.google.com/apikey. NUNCA coloque a chave no código nem no GitHub.
+      - key: GEMINI_API_KEY
+        sync: false
+      # "1" = todo mundo usa o site como Gato Mestre (bom pra testadores, a IA fica liberada).
+      # Troque por "0" no painel do Render pra voltar às regras normais de cada plano.
+      - key: FOCUS_PREMIUM_PADRAO
+        value: "1"
+    # ATENÇÃO (plano free): o banco (instance/focus.db) e as fotos enviadas (static/uploads)
+    # são apagados a cada novo deploy ou reinício. Pra guardar por dias é preciso um plano
+    # pago com disco persistente montado na pasta instance.

@@ -1,0 +1,46 @@
+/* Aba "Planos" ao lado da foto de perfil (barra do topo).
+   Visual de "pílula" com contorno — de propósito diferente das abas normais
+   (Início, Estudos...), que são texto simples e só ficam preenchidas quando ativas. */
+.profile-container { display: flex; align-items: center; gap: 8px; }
+
+/* Cor fixa (dourado + texto escuro + anel branco): aparece em QUALQUER tema,
+   escuro, claro ou colorido, sem depender da cor de destaque do tema. */
+.nav-planos {
+    position: relative; display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 18px; border-radius: 40px; text-decoration: none;
+    font-size: 14px; font-weight: 800; letter-spacing: 0.2px; white-space: nowrap;
+    color: #1a1a1a; background: linear-gradient(135deg, #ffe08a, #f2b035);
+    border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.35), 0 4px 10px rgba(0,0,0,0.25);
+    transition: var(--transition); overflow: hidden;
+}
+.nav-planos .nav-gato {
+    flex: 0 0 20px; width: 20px; height: 20px; background: currentColor;
+    -webkit-mask: url("../img/gato-icone.svg") center / contain no-repeat;
+            mask: url("../img/gato-icone.svg") center / contain no-repeat;
+}
+.nav-planos::after {
+    content: ''; position: absolute; top: 0; left: -60%; width: 40%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,0.35), transparent);
+    transform: skewX(-20deg); animation: planosBrilho 4.5s ease-in-out infinite; pointer-events: none;
+}
+@keyframes planosBrilho { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+body.reduce-motion .nav-planos::after { animation: none; display: none; }
+
+.nav-planos:hover, .nav-planos:focus-visible {
+    filter: brightness(1.08); transform: translateY(-1px); color: #1a1a1a;
+}
+body.high-contrast .nav-planos { color: #000 !important; background: #ffe600 !important; border-color: #fff !important; }
+
+/* Celular: pílula compacta (ícone + nome) pra caber com o logo e a foto */
+@media (max-width: 900px) {
+    .profile-container { gap: 6px; }
+    .nav-planos { padding: 0 12px; min-height: 40px; font-size: 13px; gap: 6px; }
+    .nav-planos:hover { transform: none; }
+}
+@media (max-width: 480px) {
+    .profile-trigger span { max-width: 22vw; }
+}
+@media (max-width: 340px) {
+    .nav-planos span { display: none; }
+    .nav-planos { padding: 0; width: 40px; justify-content: center; }
+}
